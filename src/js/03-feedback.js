@@ -3,49 +3,45 @@ import throttle from 'lodash.throttle';
 
 const FEEDBACK_FORM_LOCAL_STORAGE_KEY = "feedback-form-state";
 const feedbackForm = document.querySelector(".feedback-form")
-let formData ={}
+const inputEmail = document.querySelector("input")
+const textArreaMessage = document.querySelector("textarea")
 
 
-const handleInput =e =>{
-   
-    const { target } = e;
-    
-    const elementTargetName = target.name;
-    const elementTargetValue = target.value;
 
-//   console.log('elementTargetName :>> ', elementTargetName);
-//   console.log('elementTargetValue :>> ', elementTargetValue);
-
-  formData[elementTargetName] = elementTargetValue;
-
-  localStorage.setItem(
-        FEEDBACK_FORM_LOCAL_STORAGE_KEY, JSON.stringify(formData)
-      );
+const handleInput = ()=>{
+  localStorage.setItem(FEEDBACK_FORM_LOCAL_STORAGE_KEY, JSON.stringify({email: inputEmail.value, message:textArreaMessage.value}))
 }
 
-const fillForm =()=>{
-    const dataFormParse = JSON.parse(localStorage.getItem(FEEDBACK_FORM_LOCAL_STORAGE_KEY))
 
 
-    for (const key in dataFormParse) {
-        const inputEl = feedbackForm.elements[key];
-        const inputValue = dataFormParse[key];
-        inputEl.value = inputValue;
-      }
+const fillForm = ()=>{
+  const dataFormParse = JSON.parse(localStorage.getItem(FEEDBACK_FORM_LOCAL_STORAGE_KEY))
+  
+  if(!dataFormParse){
+    return
+  }
+
+  inputEmail.value = dataFormParse.email
+  textArreaMessage.value = dataFormParse.message
+
 }
-fillForm()
 
 
 const submitForm = event =>{
     event.preventDefault()
     
+    console.log({email: inputEmail.value, message: textArreaMessage.value})
+
     localStorage.removeItem(FEEDBACK_FORM_LOCAL_STORAGE_KEY)
 
-    console.log(formData)
-
-    event.currentTarget.reset()
+    feedbackForm.reset()
     
-
 }
-feedbackForm.addEventListener("input", throttle(handleInput), 500)
-feedbackForm.addEventListener('submit', submitForm)
+
+
+inputEmail.addEventListener("input", throttle(handleInput, 500))
+textArreaMessage.addEventListener("input", throttle(handleInput, 500))
+feedbackForm.addEventListener("submit", submitForm)
+
+fillForm()
+

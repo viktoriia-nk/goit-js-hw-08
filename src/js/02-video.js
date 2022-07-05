@@ -13,7 +13,7 @@ const KEY_OF_TIME = "videoplayer-current-time"
 
 const onPause = function(timeupdate) {
    const timeStingify = JSON.stringify(timeupdate)
-    console.log(timeStingify)
+    // console.log(timeStingify)
     localStorage.setItem(KEY_OF_TIME, timeStingify)
     
 };
@@ -23,13 +23,15 @@ player.on('pause', onPause);
 
 
 const currentPause = function(){
+    if (localStorage.getItem(KEY_OF_TIME)!==null){
     const timeLocal = localStorage.getItem(KEY_OF_TIME)
     const pausedTime = JSON.parse(timeLocal)
-    console.log(pausedTime)
-
+    // console.log(pausedTime)
+    
     player.setCurrentTime(pausedTime.seconds);
+    }
 }
 
 currentPause()
 
-player.on('timeupdate', throttle(currentPause, 1000));
+player.on('timeupdate', throttle(onPause, 1000));
